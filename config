@@ -1,0 +1,30 @@
+# Default prefix
+PREFIX ?= /usr/local/openresty/luajit
+# Lua version and dirs
+LUA_SYS_VER ?= 5.1
+LUA_LIBDIR ?= $(PREFIX)/lib/lua/$(LUA_SYS_VER)
+LUA_DIR ?= $(PREFIX)/share/lua/$(LUA_SYS_VER)
+LUA_INC ?= $(PREFIX)/include/luajit-2.1
+
+# OS dependent
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin) # MacOS
+	LIB_OPTION ?= -bundle -undefined dynamic_lookup -mmacosx-version-min=10.3
+else # Linux/BSD
+	LIB_OPTION ?= -shared
+endif
+
+# driver specific params
+# - MySQL
+DRIVER_LIBS_mysql ?= -L/usr/include/mysql -lmysqlclient -lz
+DRIVER_INCS_mysql ?= -I/usr/include/mysql
+#DRIVER_LIBS_mysql ?= -L/usr/lib -lmysqlclient -lz
+#DRIVER_INCS_mysql ?= -I/usr/include/mysql
+# general compilation parameters
+WARN = -Wall -Wmissing-prototypes -Wmissing-declarations -pedantic
+INCS = -I$(LUA_INC)
+DEFS =
+CFLAGS = -O2 -std=gnu99 $(WARN) -fPIC $(DRIVER_INCS) $(INCS) \
+         -DLUASQL_VERSION_NUMBER='"$V"' $(DEFS)
+CC= gcc
+/usr/local/openresty/luajit/include/luajit-2.1
